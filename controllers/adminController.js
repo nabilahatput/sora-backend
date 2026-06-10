@@ -10,7 +10,7 @@ const query = async (sql, params) => {
 
 exports.getAllGuru = async (req, res) => {
     try {
-        const results = await query('SELECT id, nama, kode_kelas FROM guru');
+        const results = await query('SELECT id, nama, nip, kode_kelas FROM guru');
         res.json({ success: true, total: results.length, data: results });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
@@ -18,10 +18,10 @@ exports.getAllGuru = async (req, res) => {
 };
 
 exports.tambahGuru = async (req, res) => {
-    const { nama, kode_kelas, password } = req.body;
+    const { nama, nip, kode_kelas, password } = req.body;
     try {
         const hashed = await bcrypt.hash(password, 10);
-        await query('INSERT INTO guru (nama, kode_kelas, password) VALUES (?, ?, ?)', [nama, kode_kelas, hashed]);
+        await query('INSERT INTO guru (nama, nip, kode_kelas, password) VALUES (?, ?, ?, ?)', [nama, nip, kode_kelas, hashed]);
         res.json({ success: true, message: 'Guru berhasil ditambahkan' });
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
@@ -30,10 +30,10 @@ exports.tambahGuru = async (req, res) => {
 
 exports.editGuru = async (req, res) => {
     const { id } = req.params;
-    const { nama, kode_kelas, password } = req.body;
+    const { nama, nip, kode_kelas, password } = req.body;
     try {
-        let sql = 'UPDATE guru SET nama = ?, kode_kelas = ?';
-        let params = [nama, kode_kelas];
+        let sql = 'UPDATE guru SET nama = ?, nip = ?, kode_kelas = ?';
+        let params = [nama, nip, kode_kelas];
         if (password) {
             params.push(await bcrypt.hash(password, 10));
             sql += ', password = ?';
