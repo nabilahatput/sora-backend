@@ -8,7 +8,7 @@ exports.login = async (req, res) => {
 
         let sql = '';
         if (role === 'admin') sql = 'SELECT * FROM admin WHERE email = ?';
-        else if (role === 'guru') sql = 'SELECT * FROM guru WHERE kode_kelas = ?';
+        else if (role === 'guru') sql = "SELECT * FROM guru WHERE CONCAT(nip, kode_kelas) = ?";
         else if (role === 'orangtua') sql = 'SELECT * FROM orang_tua WHERE nis = ?';
         else return res.status(400).json({ message: 'Role tidak valid' });
 
@@ -37,7 +37,7 @@ exports.updatePassword = async (req, res) => {
         const { identifier, password_lama, password_baru, role } = req.body;
 
         let sql = '';
-        if (role === 'guru') sql = 'SELECT * FROM guru WHERE kode_kelas = ?';
+        if (role === 'guru') sql = "SELECT * FROM guru WHERE CONCAT(nip, kode_kelas) = ?";
         else if (role === 'orangtua') sql = 'SELECT * FROM orang_tua WHERE nis = ?';
         else if (role === 'admin') sql = 'SELECT * FROM admin WHERE email = ?';
         else return res.status(400).json({ success: false, message: 'Role tidak valid' });
@@ -52,7 +52,7 @@ exports.updatePassword = async (req, res) => {
         const hashed = await bcrypt.hash(password_baru, 10);
 
         let updateSql = '';
-        if (role === 'guru') updateSql = 'UPDATE guru SET password = ? WHERE kode_kelas = ?';
+        if (role === 'guru') updateSql = "UPDATE guru SET password = ? WHERE CONCAT(nip, kode_kelas) = ?";
         else if (role === 'orangtua') updateSql = 'UPDATE orang_tua SET password = ? WHERE nis = ?';
         else updateSql = 'UPDATE admin SET password = ? WHERE email = ?';
 
