@@ -10,6 +10,6 @@ router.get('/laporan', guruController.getLaporan);
 router.get('/chart', guruController.getChart);
 router.get('/chart-general', guruController.getChartGeneral);
 router.get('/export-csv', guruController.exportCSV);
-router.put('/profil', guruController.updateProfil);
+router.put('/profil', guruController.updateProfil); // ← endpoint update nama guru
 
 module.exports = router;
