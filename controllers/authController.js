@@ -22,9 +22,8 @@ exports.login = async (req, res) => {
         db.query('INSERT INTO login_history (user_id, role) VALUES (?, ?)', [user.id, role])
             .then(() => console.log('History tersimpan, user_id:', user.id, 'role:', role))
             .catch(e => console.log('Gagal simpan history ERROR:', e));
-
-        const token = jwt.sign({ id: user.id, role }, 'SECRET_KEY', { expiresIn: '1h' });
-
+        
+        const token = jwt.sign({ id: user.id, role }, process.env.JWT_SECRET, { expiresIn: '1h' });
         return res.json({ message: 'Login berhasil', token, role, data: user });
     } catch (err) {
         console.log(err);

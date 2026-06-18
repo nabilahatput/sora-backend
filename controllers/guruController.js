@@ -52,7 +52,8 @@ exports.getChart = async (req, res) => {
     const { mapel } = req.query;
     try {
         const [results] = await db.query(
-            `SELECT tipe, COUNT(*) as total FROM aktivitas WHERE mapel = ? AND tanggal = CURDATE() GROUP BY tipe`,
+            // ✅ FIX: hapus filter CURDATE() agar data terakumulasi semua
+            `SELECT tipe, COUNT(*) as total FROM aktivitas WHERE mapel = ? GROUP BY tipe`,
             [mapel]
         );
         let data = { tegur: 0, panggil: 0, presensi: 0 };
@@ -68,9 +69,10 @@ exports.getChartGeneral = async (req, res) => {
     const { kelas } = req.query;
     try {
         const [results] = await db.query(
+            // ✅ FIX: hapus filter CURDATE() agar data terakumulasi semua
             `SELECT aktivitas.tipe, COUNT(*) as total FROM aktivitas
              JOIN siswa ON aktivitas.siswa_id = siswa.id
-             WHERE siswa.kelas = ? AND aktivitas.tanggal = CURDATE()
+             WHERE siswa.kelas = ?
              GROUP BY aktivitas.tipe`,
             [kelas]
         );
@@ -139,9 +141,10 @@ exports.exportCSV = async (req, res) => {
     const { mapel } = req.query;
     try {
         const [results] = await db.query(
+            // ✅ FIX: hapus filter CURDATE() agar export semua data
             `SELECT siswa.nama, aktivitas.mapel, aktivitas.tipe, aktivitas.tanggal, aktivitas.waktu
              FROM aktivitas JOIN siswa ON aktivitas.siswa_id = siswa.id
-             WHERE aktivitas.mapel = ? AND aktivitas.tanggal = CURDATE()`,
+             WHERE aktivitas.mapel = ?`,
             [mapel]
         );
         let csv = 'Nama,Mapel,Tipe,Tanggal,Waktu\n';
