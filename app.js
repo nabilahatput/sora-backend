@@ -1,4 +1,4 @@
- require('dotenv').config();
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const http = require('http');
@@ -7,15 +7,11 @@ const { WebSocketServer } = require('ws');
 const app = express();
 const server = http.createServer(app);
 
-// Middleware dulu sebelum apapun
 app.use(cors({ origin: '*', methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], allowedHeaders: ['Content-Type', 'Authorization'] }));
 app.use(express.json());
 
-// DB & WebSocket
 require('./config/db');
-require('./websocket');
 
-// WebSocket Server
 const wss = new WebSocketServer({ server });
 const pins = {};
 
@@ -45,7 +41,6 @@ wss.on('connection', (ws, req) => {
 app.set('wss', wss);
 app.set('pins', pins);
 
-// Routes
 const authRoutes = require('./routes/authRoutes');
 const guruRoutes = require('./routes/guruRoutes');
 const adminRoutes = require('./routes/adminRoutes');
