@@ -134,7 +134,7 @@ exports.presensi = async (req, res) => {
     }
 };
 
-// 📄 EXPORT CSV
+// EXPORT CSV
 exports.exportCSV = async (req, res) => {
     const { mapel } = req.query;
     try {
@@ -154,16 +154,16 @@ exports.exportCSV = async (req, res) => {
     }
 };
 
-exports.updateProfil = (req, res) => {
+// UPDATE PROFIL GURU
+exports.updateProfil = async (req, res) => {
     const { nama } = req.body;
     const guruId = req.user.id;
 
-    db.query(
-        'UPDATE guru SET nama = ? WHERE id = ?',
-        [nama, guruId],
-        (err) => {
-            if (err) return res.status(500).json({ message: 'Server error' });
-            res.json({ message: 'Profil berhasil diupdate' });
-        }
-    );
+    try {
+        await db.query('UPDATE guru SET nama = ? WHERE id = ?', [nama, guruId]);
+        res.json({ message: 'Profil berhasil diupdate' });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: 'Server error' });
+    }
 };
