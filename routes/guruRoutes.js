@@ -12,5 +12,6 @@ router.get('/chart', guruController.getChart);
 router.get('/chart-general', guruController.getChartGeneral);
 router.get('/export-csv', guruController.exportCSV);
 router.put('/profil', verifyToken, guruController.updateProfil);
+router.post('/upload-foto', verifyToken, guruController.upload.single('foto'), guruController.uploadFoto);
 
 module.exports = router;
