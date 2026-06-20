@@ -68,6 +68,19 @@ app.use('/uploads',       express.static(path.join(__dirname, 'uploads')));
 
 app.get('/', (req, res) => res.send('Backend berjalan'));
 
+// ── DEBUG SEMENTARA: cek isi folder uploads lewat browser ─────────────────────
+// Buka https://sora-backend-production-a4de.up.railway.app/debug-uploads
+// PENTING: hapus endpoint ini setelah selesai debugging, jangan dibiarkan
+// permanen di production (membocorkan daftar nama file ke publik).
+app.get('/debug-uploads', (req, res) => {
+  fs.readdir(uploadsDir, (err, files) => {
+    if (err) {
+      return res.status(500).json({ error: err.message, path: uploadsDir });
+    }
+    res.json({ path: uploadsDir, count: files.length, files });
+  });
+});
+
 // ── START SERVER ──────────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
