@@ -1,0 +1,19 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "hayabusa.proxy.rlwy.net",
+            "port": 53147,
+            "driver": "MySQL",
+            "name": "Railway DB Mysql - SORA",
+            "username": "root",
+            "database": "railway",
+            "password": "BXJwZqOZeNKBgkRABGyxKLqUcMGlGwNJ"
+        }
+    ]
+}
