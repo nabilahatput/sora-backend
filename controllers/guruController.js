@@ -206,7 +206,7 @@ exports.getTraffic = async (req, res) => {
 
   let sql;
   switch (mode) {
-    case 'harian':
+    case 'mingguan':
       sql = `
         SELECT aktivitas.tanggal AS label, aktivitas.tipe, COUNT(*) as total
         FROM aktivitas
@@ -244,7 +244,7 @@ exports.getTraffic = async (req, res) => {
         ORDER BY label ASC`;
       break;
     default:
-      return res.status(400).json({ message: 'mode tidak valid (harian/bulanan/semester/tahunan)' });
+      return res.status(400).json({ message: 'mode tidak valid (mingguan/bulanan/semester/tahunan)' });
   }
 
   try {
