@@ -196,6 +196,77 @@ exports.getChartGeneral = async (req, res) => {
   }
 };
 
+// ── GET TRAFFIC (untuk grafik di dashboard) ───────────────────────────────────
+
+exports.getTraffic = async (req, res) => {
+  const { mode, kelas } = req.query;
+
+  const whereKelas = kelas ? ' AND siswa.kelas = ?' : '';
+  const params = kelas ? [kelas] : [];
+
+  let sql;
+  switch (mode) {
+    case 'harian':
+      sql = `
+        SELECT aktivitas.tanggal AS label, aktivitas.tipe, COUNT(*) as total
+        FROM aktivitas
+        JOIN siswa ON aktivitas.siswa_id = siswa.id
+        WHERE aktivitas.tanggal >= DATE_SUB(CURDATE(), INTERVAL 13 DAY)${whereKelas}
+        GROUP BY aktivitas.tanggal, aktivitas.tipe
+        ORDER BY aktivitas.tanggal ASC`;
+      break;
+    case 'bulanan':
+      sql = `
+        SELECT DATE_FORMAT(aktivitas.tanggal, '%Y-%m') AS label, aktivitas.tipe, COUNT(*) as total
+        FROM aktivitas
+        JOIN siswa ON aktivitas.siswa_id = siswa.id
+        WHERE aktivitas.tanggal >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)${whereKelas}
+        GROUP BY label, aktivitas.tipe
+        ORDER BY label ASC`;
+      break;
+    case 'semester':
+      sql = `
+        SELECT CONCAT(YEAR(aktivitas.tanggal), '-', IF(MONTH(aktivitas.tanggal) <= 6, 1, 2)) AS label,
+               aktivitas.tipe, COUNT(*) as total
+        FROM aktivitas
+        JOIN siswa ON aktivitas.siswa_id = siswa.id
+        WHERE 1=1${whereKelas}
+        GROUP BY label, aktivitas.tipe
+        ORDER BY label ASC`;
+      break;
+    case 'tahunan':
+      sql = `
+        SELECT YEAR(aktivitas.tanggal) AS label, aktivitas.tipe, COUNT(*) as total
+        FROM aktivitas
+        JOIN siswa ON aktivitas.siswa_id = siswa.id
+        WHERE 1=1${whereKelas}
+        GROUP BY label, aktivitas.tipe
+        ORDER BY label ASC`;
+      break;
+    default:
+      return res.status(400).json({ message: 'mode tidak valid (harian/bulanan/semester/tahunan)' });
+  }
+
+  try {
+    const [rows] = await db.query(sql, params);
+
+    const map = {};
+    rows.forEach(r => {
+      const label = String(r.label);
+      if (!map[label]) map[label] = { label, presensi: 0, tegur: 0, panggil: 0 };
+      if (r.tipe === 'presensi') map[label].presensi = r.total;
+      if (r.tipe === 'tegur')    map[label].tegur = r.total;
+      if (r.tipe === 'panggil')  map[label].panggil = r.total;
+    });
+
+    const data = Object.values(map).sort((a, b) => a.label.localeCompare(b.label));
+    res.json({ data });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 // ── GET LAPORAN RANGE (untuk export PDF rentang tanggal) ──────────────────────
 
 exports.getLaporanRange = async (req, res) => {
