@@ -88,7 +88,10 @@ exports.getSiswa = async (req, res) => {
   const kelas = req.query.kelas;
   try {
     const [results] = await db.query(
-      'SELECT * FROM siswa WHERE kelas = ?',
+      `SELECT siswa.*, devices.ip_address AS esp_ip
+       FROM siswa
+       LEFT JOIN devices ON siswa.device_id = devices.id
+       WHERE siswa.kelas = ?`,
       [kelas]
     );
     res.json(results);
