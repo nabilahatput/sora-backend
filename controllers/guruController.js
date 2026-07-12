@@ -335,8 +335,6 @@ exports.getLaporanRange = async (req, res) => {
   }
 };
 
-// ── TEGUR ─────────────────────────────────────────────────────────────────────
-
 exports.tegur = async (req, res) => {
   const { siswa_id, guru_id, mapel } = req.body;
   const tgl = getTanggalWIB(req);
@@ -348,15 +346,20 @@ exports.tegur = async (req, res) => {
       [siswa_id, guru_id, mapel, tgl, jam]
     );
     const pins = req.app.get('pins');
-    if (pins[siswa_id]) pins[siswa_id].send(JSON.stringify({ tipe: 'tegur' }));
+    console.log('DEBUG tegur - siswa_id diterima:', siswa_id, '| tipe data:', typeof siswa_id);
+    console.log('DEBUG tegur - daftar pins yang connect:', Object.keys(pins));
+    if (pins[siswa_id]) {
+      pins[siswa_id].send(JSON.stringify({ tipe: 'tegur' }));
+      console.log('DEBUG tegur - BERHASIL kirim ke ESP32');
+    } else {
+      console.log('DEBUG tegur - GAGAL, tidak ada ESP32 terdaftar untuk siswa_id ini');
+    }
     res.json({ message: 'Tegur berhasil' });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: 'Gagal tegur' });
   }
 };
-
-// ── PANGGIL ───────────────────────────────────────────────────────────────────
 
 exports.panggil = async (req, res) => {
   const { siswa_id, guru_id, mapel } = req.body;
@@ -369,15 +372,20 @@ exports.panggil = async (req, res) => {
       [siswa_id, guru_id, mapel, tgl, jam]
     );
     const pins = req.app.get('pins');
-    if (pins[siswa_id]) pins[siswa_id].send(JSON.stringify({ tipe: 'panggil' }));
+    console.log('DEBUG panggil - siswa_id diterima:', siswa_id, '| tipe data:', typeof siswa_id);
+    console.log('DEBUG panggil - daftar pins yang connect:', Object.keys(pins));
+    if (pins[siswa_id]) {
+      pins[siswa_id].send(JSON.stringify({ tipe: 'panggil' }));
+      console.log('DEBUG panggil - BERHASIL kirim ke ESP32');
+    } else {
+      console.log('DEBUG panggil - GAGAL, tidak ada ESP32 terdaftar untuk siswa_id ini');
+    }
     res.json({ message: 'Panggil berhasil' });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: 'Gagal panggil' });
   }
 };
-
-// ── PRESENSI ──────────────────────────────────────────────────────────────────
 
 exports.presensi = async (req, res) => {
   const { siswa_id, guru_id, mapel } = req.body;
@@ -390,7 +398,14 @@ exports.presensi = async (req, res) => {
       [siswa_id, guru_id, mapel, tgl, jam]
     );
     const pins = req.app.get('pins');
-    if (pins[siswa_id]) pins[siswa_id].send(JSON.stringify({ tipe: 'presensi' }));
+    console.log('DEBUG presensi - siswa_id diterima:', siswa_id, '| tipe data:', typeof siswa_id);
+    console.log('DEBUG presensi - daftar pins yang connect:', Object.keys(pins));
+    if (pins[siswa_id]) {
+      pins[siswa_id].send(JSON.stringify({ tipe: 'presensi' }));
+      console.log('DEBUG presensi - BERHASIL kirim ke ESP32');
+    } else {
+      console.log('DEBUG presensi - GAGAL, tidak ada ESP32 terdaftar untuk siswa_id ini');
+    }
     res.json({ message: 'Presensi berhasil' });
   } catch (err) {
     console.log(err);
